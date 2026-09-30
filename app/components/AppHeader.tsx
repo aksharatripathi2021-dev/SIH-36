@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { LanguageSelector } from "./LanguageSelector";
+import { storageService } from "@/services/storageService";
 import { useTranslation } from "@/i18n";
 
 interface AppHeaderProps {
@@ -103,6 +104,22 @@ export function AppHeader({
             )}
           </button>
         </div>
+
+        {/* Controlled Demo Reset Button */}
+        <button
+          type="button"
+          onClick={() => {
+            if (confirm("Reset demo data to initial state (LM-2026-00124 in Nagpur, Maharashtra)?")) {
+              storageService.resetDemoState();
+              window.location.reload();
+            }
+          }}
+          className="hidden sm:flex items-center gap-1 px-2 py-1 text-[11px] font-semibold text-slate-600 hover:text-slate-900 bg-slate-100 hover:bg-slate-200 rounded border border-slate-300 transition-colors cursor-pointer"
+          title="Restore deterministic demonstration baseline"
+        >
+          <span>🔄</span>
+          <span>Reset Demo</span>
+        </button>
 
         {/* User Initials Avatar */}
         <div className="flex items-center gap-2">

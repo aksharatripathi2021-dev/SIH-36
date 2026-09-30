@@ -7,6 +7,7 @@ import { InstitutionalHeader } from "@/app/components/InstitutionalHeader";
 import { registrationService, TraderRegistrationPayload } from "@/services/registrationService";
 import { authService } from "@/services/authService";
 import { useTranslation } from "@/i18n";
+import { INDIAN_STATES_AND_UTS, getDistrictsForState } from "@/src/data/indiaJurisdictions";
 
 export default function RegisterPage() {
   const { t } = useTranslation();
@@ -37,6 +38,19 @@ export default function RegisterPage() {
       ...formData,
       [e.target.name]: e.target.value
     });
+    setErrorMessage(null);
+  };
+
+  const handleStateChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const newState = e.target.value;
+    const availableDistricts = getDistrictsForState(newState);
+    const newDistrict = availableDistricts[0] || "";
+    setFormData((prev) => ({
+      ...prev,
+      state: newState,
+      district: newDistrict,
+      city: newDistrict
+    }));
     setErrorMessage(null);
   };
 
@@ -295,13 +309,14 @@ export default function RegisterPage() {
                   <select
                     name="state"
                     value={formData.state}
-                    onChange={handleChange}
+                    onChange={handleStateChange}
                     className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-md text-slate-700 focus:bg-white cursor-pointer"
                   >
-                    <option value="Delhi">Delhi</option>
-                    <option value="Haryana">Haryana</option>
-                    <option value="Uttar Pradesh">Uttar Pradesh</option>
-                    <option value="Maharashtra">Maharashtra</option>
+                    {INDIAN_STATES_AND_UTS.map((s) => (
+                      <option key={s.state} value={s.state}>
+                        {s.state}
+                      </option>
+                    ))}
                   </select>
                 </div>
                 <div>
@@ -312,10 +327,11 @@ export default function RegisterPage() {
                     onChange={handleChange}
                     className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-md text-slate-700 focus:bg-white cursor-pointer"
                   >
-                    <option value="Delhi South">Delhi South</option>
-                    <option value="Delhi North">Delhi North</option>
-                    <option value="Delhi Central">Delhi Central</option>
-                    <option value="Delhi East">Delhi East</option>
+                    {getDistrictsForState(formData.state).map((dist) => (
+                      <option key={dist} value={dist}>
+                        {dist}
+                      </option>
+                    ))}
                   </select>
                 </div>
                 <div>
@@ -325,7 +341,7 @@ export default function RegisterPage() {
                     name="city"
                     value={formData.city}
                     onChange={handleChange}
-                    placeholder="e.g. Saket"
+                    placeholder="e.g. Nagpur / Saket"
                     className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-md text-slate-900 focus:bg-white"
                   />
                 </div>
@@ -466,7 +482,7 @@ export default function RegisterPage() {
 
       <footer className="w-full py-4 px-6 border-t border-slate-200/60 bg-[#F5F6F8] text-center text-xs text-slate-500">
         <p className="font-medium text-slate-600">Department of Consumer Affairs, Government of India</p>
-        <p className="mt-0.5 text-slate-400">National Metrology e-Mapan Services Portal</p>
+        <p className="mt-0.5 text-slate-400">National Metrology e-Tarazu Services Portal</p>
       </footer>
     </div>
   );

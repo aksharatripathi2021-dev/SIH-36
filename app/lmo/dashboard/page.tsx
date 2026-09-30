@@ -21,20 +21,31 @@ export default function LmoDashboardPage() {
 
   useEffect(() => {
     loadLmoData();
+    const unsubscribe = (require("@/services/storageService").storageService as any).subscribeToDemoUpdates(() => {
+      loadLmoData();
+    });
+    return () => {
+      if (unsubscribe) unsubscribe();
+    };
   }, [statusFilter, zoneFilter, searchQuery]);
 
   const loadLmoData = async () => {
-    const m = await dashboardService.getLmoMetrics("user-lmo-1");
+    const user = await (await import("@/services/authService")).authService.getCurrentUser();
+    const officerId = user?.id || "user-lmo-demo";
+    const m = await dashboardService.getLmoMetrics(officerId);
     setMetrics(m);
 
     const apps = await applicationService.getApplications({
-      officerId: "user-lmo-1",
+      officerId,
       status: statusFilter !== "All statuses" ? statusFilter : undefined,
       zone: zoneFilter !== "All zones" ? zoneFilter : undefined,
       search: searchQuery || undefined
     });
     setApplications(apps);
   };
+
+  const primaryApp = applications.find((a) => a.id === "LM-2026-00124") ||
+                     (require("@/services/storageService").storageService.getApplications() as any[]).find((a: any) => a.id === "LM-2026-00124");
 
   return (
     <div className="min-h-screen bg-[#F8F9FA] flex">
@@ -130,24 +141,27 @@ export default function LmoDashboardPage() {
                 </span>
               </div>
 
-              {/* Case Box: APP-26036-0148 */}
+              {/* Case Box: LM-2026-00124 (Primary Demonstration Record) */}
               <Link
-                href="/lmo/applications/APP-26036-0148/verify"
+                href="/lmo/applications/LM-2026-00124/verify"
                 className="block p-3.5 rounded-lg border border-slate-200 hover:border-slate-300 bg-slate-50/50 hover:bg-slate-50 transition-all group cursor-pointer"
               >
                 <div className="flex items-center justify-between">
                   <div>
-                    <span className="text-xs font-bold text-slate-900 group-hover:text-[#801424] transition-colors">
-                      APP-26036-0148
-                    </span>
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs font-bold text-slate-900 group-hover:text-[#801424] transition-colors">
+                        LM-2026-00124
+                      </span>
+                      <StatusBadge status={primaryApp?.status || "ASSIGNED"} size="sm" />
+                    </div>
                     <p className="text-xs text-slate-600 font-medium mt-0.5">
-                      Bharat Mart Pvt Ltd
+                      Aryan · Supermarket (Nagpur, Maharashtra)
                     </p>
                     <p className="text-xs font-semibold text-slate-800 mt-1">
-                      Platform Weighing Scale W-104
+                      Electronic Weighing Instrument (EWI-DEMO-001)
                     </p>
                     <p className="text-[11px] text-slate-500 mt-0.5">
-                      {applications.find((a) => a.id === "APP-26036-0148")?.status || "Verification In Progress"} · Updated 12 Jun 2025
+                      Scheduled Field Verification · Assigned to Demo LMO Officer
                     </p>
                   </div>
                   <span className="text-slate-400 group-hover:text-slate-700 group-hover:translate-x-1 transition-all text-sm font-bold">
@@ -161,17 +175,17 @@ export default function LmoDashboardPage() {
             <div className="bg-white rounded-lg border border-slate-200 p-5 shadow-2xs space-y-3">
               <div>
                 <h3 className="text-sm font-bold text-slate-900">Today&apos;s schedule</h3>
-                <p className="text-xs text-slate-500">Three upcoming field visits</p>
+                <p className="text-xs text-slate-500">Upcoming field visits</p>
               </div>
 
               <div className="space-y-2.5 text-xs">
                 <Link
-                  href="/lmo/applications/APP-26036-0148/verify"
-                  className="flex items-center justify-between p-2 rounded hover:bg-slate-50 transition-colors"
+                  href="/lmo/applications/LM-2026-00124/verify"
+                  className="flex items-center justify-between p-2 rounded bg-amber-50/50 border border-amber-200/60 hover:bg-amber-50 transition-colors"
                 >
                   <span className="font-bold text-slate-900">10:00</span>
-                  <span className="text-slate-700 font-medium">Bharat Mart</span>
-                  <span className="text-[11px] text-slate-400 font-mono">APP-26036-0148</span>
+                  <span className="text-slate-800 font-semibold">Supermarket (Aryan)</span>
+                  <span className="text-[11px] text-[#801424] font-mono font-bold">LM-2026-00124</span>
                 </Link>
 
                 <div className="flex items-center justify-between p-2 rounded hover:bg-slate-50 transition-colors">

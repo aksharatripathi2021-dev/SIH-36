@@ -89,7 +89,7 @@ export default function OwnerCertificatesPage() {
 
   const handleSetSamplePhoto = () => {
     // Standard mock verification sticker photo data URL (SVG encoded)
-    const svgData = `<svg xmlns="http://www.w3.org/2000/svg" width="400" height="300" viewBox="0 0 400 300"><rect width="100%" height="100%" fill="#e2e8f0"/><rect x="20" y="20" width="360" height="260" rx="8" fill="#ffffff" stroke="#cbd5e1" stroke-width="2"/><text x="50%" y="40" font-family="sans-serif" font-size="14" font-weight="bold" fill="#0f172a" text-anchor="middle">Physical Verification QR Display</text><rect x="140" y="60" width="120" height="120" fill="#0d1b2a" rx="4"/><rect x="150" y="70" width="100" height="100" fill="#ffffff"/><rect x="160" y="80" width="80" height="80" fill="#0d1b2a"/><text x="50%" y="210" font-family="monospace" font-size="12" font-weight="bold" fill="#0284c7" text-anchor="middle">${selectedCert?.certificateId || "CERT"}</text><text x="50%" y="235" font-family="sans-serif" font-size="11" fill="#16a34a" text-anchor="middle">Affixed to Scale Display</text><text x="50%" y="255" font-family="sans-serif" font-size="10" fill="#64748b" text-anchor="middle">Shop Front Counter • Delhi South</text></svg>`;
+    const svgData = `<svg xmlns="http://www.w3.org/2000/svg" width="400" height="300" viewBox="0 0 400 300"><rect width="100%" height="100%" fill="#e2e8f0"/><rect x="20" y="20" width="360" height="260" rx="8" fill="#ffffff" stroke="#cbd5e1" stroke-width="2"/><text x="50%" y="40" font-family="sans-serif" font-size="14" font-weight="bold" fill="#0f172a" text-anchor="middle">Physical Verification QR Display</text><rect x="140" y="60" width="120" height="120" fill="#0d1b2a" rx="4"/><rect x="150" y="70" width="100" height="100" fill="#ffffff"/><rect x="160" y="80" width="80" height="80" fill="#0d1b2a"/><text x="50%" y="210" font-family="monospace" font-size="12" font-weight="bold" fill="#0284c7" text-anchor="middle">${selectedCert?.certificateId || "CERT-LM-2026-00124"}</text><text x="50%" y="235" font-family="sans-serif" font-size="11" fill="#16a34a" text-anchor="middle">Affixed to Scale Display</text><text x="50%" y="255" font-family="sans-serif" font-size="10" fill="#64748b" text-anchor="middle">Shop Front Counter • Supermarket, Nagpur</text></svg>`;
     const encoded = `data:image/svg+xml;utf8,${encodeURIComponent(svgData)}`;
     setPhotoDataUrl(encoded);
     setPhotoFilename("shop_sticker_proof.svg");
@@ -503,7 +503,7 @@ export default function OwnerCertificatesPage() {
               <div className="p-3 bg-slate-50 rounded-lg border border-slate-200 space-y-1">
                 <span className="text-slate-500 font-medium">Instrument</span>
                 <div className="font-bold text-slate-900">{viewCert.instrumentName}</div>
-                <div className="text-[11px] text-slate-400 font-mono">ID: {viewCert.instrumentId || "W-104"}</div>
+                <div className="text-[11px] text-slate-400 font-mono">ID: {viewCert.instrumentId || "EWI-DEMO-001"}</div>
               </div>
 
               <div className="p-3 bg-slate-50 rounded-lg border border-slate-200 space-y-1">

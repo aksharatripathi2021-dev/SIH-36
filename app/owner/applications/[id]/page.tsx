@@ -9,42 +9,50 @@ import { StatusBadge } from "@/app/components/StatusBadge";
 import { applicationService } from "@/services/applicationService";
 import { verificationService } from "@/services/verificationService";
 import { certificateService } from "@/services/certificateService";
+import { instrumentService } from "@/services/instrumentService";
 import { pdfService } from "@/services/pdfService";
-import { Application, ApplicationStatus, VerificationObservation } from "@/types";
+import { Application, ApplicationStatus, Instrument, VerificationObservation } from "@/types";
 import { useTranslation } from "@/i18n";
+
+import { storageService } from "@/services/storageService";
 
 export default function ApplicationTrackingPage() {
   const { t } = useTranslation();
   const params = useParams();
-  const applicationId = (params?.id as string) || "APP-26036-0148";
+  const applicationId = (params?.id as string) || "LM-2026-00124";
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [application, setApplication] = useState<Application | null>(null);
+  const [instrument, setInstrument] = useState<Instrument | null>(null);
   const [observation, setObservation] = useState<VerificationObservation | null>(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    loadApplicationData();
-  }, [applicationId]);
-
   const loadApplicationData = async () => {
     setLoading(true);
-    const app = await applicationService.getApplicationById(applicationId);
+    const app = (await applicationService.getApplicationById(applicationId)) ||
+      (await applicationService.getApplicationById("LM-2026-00124")) ||
+      (await applicationService.getApplicationById("APP-26036-0148"));
     if (app) {
       setApplication(app);
+      if (app.instrumentId) {
+        const inst = await instrumentService.getInstrumentById(app.instrumentId);
+        setInstrument(inst);
+      }
       const obs = await verificationService.getVerificationObservation(app.id);
       setObservation(obs);
-    } else {
-      // Fallback to core demo case
-      const defaultApp = await applicationService.getApplicationById("APP-26036-0148");
-      setApplication(defaultApp);
-      if (defaultApp) {
-        const obs = await verificationService.getVerificationObservation(defaultApp.id);
-        setObservation(obs);
-      }
     }
     setLoading(false);
   };
+
+  useEffect(() => {
+    loadApplicationData();
+    const unsubscribe = storageService.subscribeToDemoUpdates(() => {
+      loadApplicationData();
+    });
+    return () => {
+      if (unsubscribe) unsubscribe();
+    };
+  }, [applicationId]);
 
   // Demo simulator helper to advance or toggle states for reviewer testing
   const handleCycleStatus = async (targetStatus?: ApplicationStatus) => {
@@ -107,17 +115,19 @@ export default function ApplicationTrackingPage() {
                 </span>
                 <div className="flex items-center gap-3 flex-wrap">
                   <h2 className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">
-                    {application?.instrumentName || "Platform Weighing Scale W-104"}
+                    {application?.instrumentName || "Electronic Weighing Instrument"}
                   </h2>
                   {application && <StatusBadge status={application.status} size="md" />}
                 </div>
                 <p className="text-xs text-slate-500 pt-1">
-                  300 kg capacity · {application?.ownerName || "Bharat Mart Pvt Ltd"} · Submitted {application?.submittedDate || "08 Jun 2025"}
+                  {application?.ownerName || "Aryan"} · Submitted {application?.submittedDate || "12 Jun 2025"}
                 </p>
                 <p className="text-xs text-slate-600 font-medium pt-1 flex items-center gap-1.5">
-                  <span className="w-1.5 h-1.5 rounded-full bg-blue-600 inline-block" />
+                  <span className={`w-1.5 h-1.5 rounded-full inline-block ${application?.assignedOfficer ? "bg-emerald-600" : "bg-amber-500"}`} />
                   <span>
-                    LMO assigned: {application?.assignedOfficer?.name || "Priya Sharma"} · {application?.assignedOfficer?.designation || "Delhi South LMO"}
+                    {application?.assignedOfficer
+                      ? `LMO assigned: ${application.assignedOfficer.name} · ${application.assignedOfficer.designation || "Legal Metrology Officer"}`
+                      : "Awaiting Legal Metrology Officer assignment"}
                   </span>
                 </p>
               </div>
@@ -228,8 +238,80 @@ export default function ApplicationTrackingPage() {
             </div>
           </div>
 
-          {/* Result Submitted Callout Banner */}
-          {application?.status === "Result Submitted" && (
+          {/* State 1: DRAFT */}
+          {(application?.status === "DRAFT" || application?.status === "Draft") && (
+            <div className="bg-amber-50 border border-amber-200 rounded-lg p-5 shadow-2xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div>
+                <span className="text-[10px] font-bold uppercase tracking-wider text-amber-700 bg-amber-100 px-2 py-0.5 rounded">
+                  Application Draft
+                </span>
+                <h3 className="font-bold text-sm text-amber-950 mt-1">Ready for Submission</h3>
+                <p className="text-xs text-amber-800 mt-0.5">
+                  Your verification application for <strong>{application?.instrumentName}</strong> is drafted. Submit now to begin statutory review.
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={async () => {
+                  if (!application) return;
+                  const updated = await applicationService.transitionApplicationStatus(application.id, "SUBMITTED");
+                  setApplication(updated);
+                }}
+                className="px-4 py-2 bg-[#801424] hover:bg-[#6D0E1C] text-white text-xs font-bold rounded shadow-xs transition-colors shrink-0 cursor-pointer flex items-center gap-1.5"
+              >
+                <span>Submit Application for Verification</span>
+                <span>→</span>
+              </button>
+            </div>
+          )}
+
+          {/* State 2: SUBMITTED / ADMIN_REVIEW */}
+          {(application?.status === "SUBMITTED" || application?.status === "Submitted" || application?.status === "ADMIN_REVIEW" || application?.status === "Under Review") && (
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 sm:p-5 shadow-2xs space-y-1">
+              <div className="flex items-center gap-2">
+                <span className="w-5 h-5 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold text-xs">
+                  i
+                </span>
+                <span className="font-bold text-sm text-blue-950">Application Submitted — Administrative Review</span>
+              </div>
+              <p className="text-xs text-blue-800 pl-7">
+                Application <strong>{application?.id}</strong> is received in the Nagpur Division inspection queue. The Legal Metrology Admin will review details and schedule an on-site inspection officer.
+              </p>
+            </div>
+          )}
+
+          {/* State 3: ASSIGNED / Scheduled */}
+          {(application?.status === "ASSIGNED" || application?.status === "Scheduled") && (
+            <div className="bg-indigo-50 border border-indigo-200 rounded-lg p-4 sm:p-5 shadow-2xs space-y-1">
+              <div className="flex items-center gap-2">
+                <span className="w-5 h-5 rounded-full bg-indigo-600 text-white flex items-center justify-center font-bold text-xs">
+                  ✓
+                </span>
+                <span className="font-bold text-sm text-indigo-950">Inspection Scheduled — LMO Officer Assigned</span>
+              </div>
+              <p className="text-xs text-indigo-800 pl-7">
+                Field Officer <strong>{application?.assignedOfficer?.name || "Demo LMO Officer"}</strong> has been designated to conduct physical metrological verification. Scheduled for: <strong>{application?.scheduledDateTime || "12 Jun 2025 at 10:00"}</strong>.
+              </p>
+            </div>
+          )}
+
+          {/* State 4: FIELD_VERIFICATION / Verification In Progress */}
+          {(application?.status === "FIELD_VERIFICATION" || application?.status === "Verification In Progress") && (
+            <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 sm:p-5 shadow-2xs space-y-1">
+              <div className="flex items-center gap-2">
+                <span className="w-5 h-5 rounded-full bg-amber-600 text-white flex items-center justify-center font-bold text-xs">
+                  ⚡
+                </span>
+                <span className="font-bold text-sm text-amber-950">Field Verification In Progress</span>
+              </div>
+              <p className="text-xs text-amber-800 pl-7">
+                The Legal Metrology Officer is currently performing calibration, repeatability, and zero-error tests at your business premises.
+              </p>
+            </div>
+          )}
+
+          {/* State 5: FIELD_VERIFIED / Result Submitted / GATC_REVIEW */}
+          {(application?.status === "FIELD_VERIFIED" || application?.status === "Result Submitted" || application?.status === "GATC_REVIEW") && (
             <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-4 sm:p-5 shadow-2xs space-y-3">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div className="flex items-center gap-2.5">
@@ -241,25 +323,20 @@ export default function ApplicationTrackingPage() {
                       Field Verification Complete — Result: PASS
                     </span>
                     <span className="text-xs text-emerald-800">
-                      Observed error: <strong>+0.02%</strong> (within prototype limit). Verification observations recorded by LMO Priya Sharma.
+                      Observed error: <strong>{observation?.observedErrorDisplay || observation?.repeatabilityError || "+0.02%"}</strong> (within standard permissible limit). Awaiting GATC laboratory clearance.
                     </span>
                   </div>
                 </div>
 
-                <button
-                  type="button"
-                  onClick={handleIssueCertificate}
-                  className="px-3.5 py-1.5 bg-[#801424] hover:bg-[#6D0E1C] active:bg-[#580D18] text-white rounded text-xs font-semibold shadow-2xs transition-colors flex items-center gap-1.5 self-start sm:self-auto cursor-pointer"
-                >
-                  <span>Advance to &quot;Certificate Generated&quot;</span>
-                  <span>→</span>
-                </button>
+                <span className="text-xs font-semibold text-emerald-700 bg-white px-3 py-1 rounded border border-emerald-200 self-start sm:self-auto">
+                  GATC Review In Progress
+                </span>
               </div>
             </div>
           )}
 
-          {/* Certificate Generated Card */}
-          {application?.status === "Certificate Generated" && (
+          {/* State 6: APPROVED / CERTIFICATE_ISSUED / Certificate Generated */}
+          {(application?.status === "CERTIFICATE_ISSUED" || application?.status === "Certificate Generated" || application?.status === "APPROVED" || application?.status === "Completed") && (
             <div className="bg-gradient-to-r from-emerald-900 to-[#0D1B2A] text-white rounded-lg p-5 sm:p-6 shadow-sm space-y-3">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div className="space-y-1">
@@ -270,25 +347,31 @@ export default function ApplicationTrackingPage() {
                     <span className="text-xs text-emerald-200">Valid &amp; Verified</span>
                   </div>
                   <h3 className="text-lg sm:text-xl font-bold tracking-tight text-white">
-                    Digital Verification Certificate #{application?.certificateId || "CERT-2025-00981"}
+                    Digital Verification Certificate #{application?.certificateId || "CERT-LM-2026-00124"}
                   </h3>
                   <p className="text-xs text-slate-300">
-                    Issued to <strong>Bharat Mart Pvt Ltd</strong> for <strong>Platform Weighing Scale W-104</strong> · Valid until <strong>11 Jun 2026</strong>
+                    Issued to <strong>{application?.ownerName || "Aryan"}</strong> for <strong>{application?.instrumentName || "Electronic Weighing Instrument"}</strong> · Valid for statutory commercial use.
                   </p>
                 </div>
 
                 <div className="flex items-center gap-2.5 shrink-0 flex-wrap">
                   <Link
-                    href={`/verify-certificate?id=${application?.certificateId || "CERT-2025-00981"}`}
+                    href={`/verify-certificate?id=${application?.certificateId || "CERT-LM-2026-00124"}`}
                     className="px-4 py-2 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs rounded-md shadow-xs transition-colors flex items-center gap-1.5"
                   >
                     <span>Verify Certificate Details (Public QR)</span>
                     <span>↗</span>
                   </Link>
+                  <Link
+                    href={`/verify/${application?.certificateId || "CERT-LM-2026-00124"}`}
+                    className="px-3.5 py-2 bg-white/10 hover:bg-white/20 text-white font-medium text-xs rounded-md border border-white/20 transition-colors"
+                  >
+                    Direct /verify URL
+                  </Link>
                   <button
                     type="button"
                     onClick={async () => {
-                      const certId = application?.certificateId || "CERT-2025-00981";
+                      const certId = application?.certificateId || "CERT-LM-2026-00124";
                       const cert = await certificateService.getCertificateById(certId);
                       if (cert) {
                         await pdfService.downloadCertificate(cert);
@@ -315,24 +398,32 @@ export default function ApplicationTrackingPage() {
               <div className="grid grid-cols-2 gap-3 text-xs">
                 <div>
                   <span className="text-slate-500 block">Manufacturer</span>
-                  <span className="font-semibold text-slate-800 mt-0.5 block">Essae</span>
+                  <span className="font-semibold text-slate-800 mt-0.5 block">
+                    {instrument?.manufacturer || "National Weigh Systems"}
+                  </span>
                 </div>
                 <div>
                   <span className="text-slate-500 block">Model</span>
-                  <span className="font-semibold text-slate-800 mt-0.5 block">DS-215</span>
+                  <span className="font-semibold text-slate-800 mt-0.5 block">
+                    {instrument?.model || "NWS-300"}
+                  </span>
                 </div>
                 <div>
                   <span className="text-slate-500 block">Serial number</span>
-                  <span className="font-semibold text-slate-800 mt-0.5 block">ES215-88421</span>
+                  <span className="font-semibold text-slate-800 mt-0.5 block">
+                    {instrument?.serialNumber || application?.instrumentId || "EWI-DEMO-001"}
+                  </span>
                 </div>
                 <div>
                   <span className="text-slate-500 block">Year</span>
-                  <span className="font-semibold text-slate-800 mt-0.5 block">2023</span>
+                  <span className="font-semibold text-slate-800 mt-0.5 block">
+                    {instrument?.yearOfManufacture || 2024}
+                  </span>
                 </div>
                 <div className="col-span-2">
                   <span className="text-slate-500 block">Location</span>
                   <span className="font-semibold text-slate-800 mt-0.5 block">
-                    {application?.location || "Karol Bagh, New Delhi"}
+                    {application?.location || instrument?.location || "Supermarket, YCC Wanadongri, Nagpur"}
                   </span>
                 </div>
               </div>

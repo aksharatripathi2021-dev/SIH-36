@@ -3,8 +3,8 @@ import { InstitutionalHeader } from "./components/InstitutionalHeader";
 import { ServiceLoginForm } from "./components/ServiceLoginForm";
 
 export const metadata = {
-  title: "Service Login | Legal Metrology Online Verification System",
-  description: "Sign in to access the Legal Metrology Online Verification System - Department of Consumer Affairs, Government of India",
+  title: "e-Tarazu | Legal Metrology Online Verification System",
+  description: "Sign in to access e-Tarazu — Legal Metrology Online Verification System - Department of Consumer Affairs, Government of India",
 };
 
 export default function HomePage() {

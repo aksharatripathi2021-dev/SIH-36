@@ -10,6 +10,7 @@ import { LegacyReceiptAssistant } from "@/app/components/LegacyReceiptAssistant"
 import { applicationService } from "@/services/applicationService";
 import { authService } from "@/services/authService";
 import { Application, Instrument, UserProfile } from "@/types";
+import { storageService } from "@/services/storageService";
 import { useTranslation } from "@/i18n";
 
 export default function OwnerApplicationsPage() {
@@ -25,6 +26,12 @@ export default function OwnerApplicationsPage() {
 
   useEffect(() => {
     loadApplications();
+    const unsubscribe = storageService.subscribeToDemoUpdates(() => {
+      loadApplications();
+    });
+    return () => {
+      if (unsubscribe) unsubscribe();
+    };
   }, [statusFilter, searchQuery]);
 
   const loadApplications = async () => {

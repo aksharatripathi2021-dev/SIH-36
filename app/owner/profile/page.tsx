@@ -30,18 +30,25 @@ export default function OwnerProfilePage() {
   }, []);
 
   const loadProfile = async () => {
-    const active = await authService.getCurrentUser();
+    let active = await authService.getCurrentUser();
+    // Guard: Ensure Owner profile displays the Trader demo identity (Aryan), never Admin data
+    if (!active || active.role !== "OWNER") {
+      const ownerUser = await authService.getUserByRole("OWNER");
+      if (ownerUser) {
+        active = ownerUser;
+      }
+    }
     setUser(active);
     setFormData({
-      name: active.name || "",
-      organization: active.organization || "",
-      mobile: active.mobile || "",
-      email: active.email || "",
-      address: active.address || "",
-      city: active.city || "New Delhi",
-      district: active.district || "Delhi South",
-      state: active.state || "Delhi",
-      preferredLanguage: active.preferredLanguage || "English"
+      name: active?.name || "Aryan",
+      organization: active?.organization || "Supermarket",
+      mobile: active?.mobile || "9820011223",
+      email: active?.email || "trader.demo@example.com",
+      address: active?.address || "YCC Wanadongri, Nagpur",
+      city: active?.city || "Nagpur",
+      district: active?.district || "Nagpur",
+      state: active?.state || "Maharashtra",
+      preferredLanguage: active?.preferredLanguage || "English"
     });
     setLoading(false);
   };
@@ -135,20 +142,20 @@ export default function OwnerProfilePage() {
             {/* Top Identity Row */}
             <div className="flex items-center gap-4 pb-6 border-b border-slate-100">
               <div className="w-16 h-16 rounded-full bg-[#0D1B2A] text-white text-xl font-bold flex items-center justify-center shrink-0">
-                {user?.avatarInitials || "TR"}
+                {user?.avatarInitials || "AR"}
               </div>
               <div>
                 <div className="flex items-center gap-2">
-                  <h3 className="text-lg font-bold text-slate-900">{user?.name || "Trader"}</h3>
+                  <h3 className="text-lg font-bold text-slate-900">{user?.name || "Aryan"}</h3>
                   <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-50 text-emerald-800 border border-emerald-200 uppercase">
                     {user?.status || "Active"}
                   </span>
                 </div>
                 <p className="text-xs text-slate-500 mt-0.5">
-                  Establishment: <strong className="text-slate-800">{user?.organization || "Registered Enterprise"}</strong>
+                  Establishment: <strong className="text-slate-800">{user?.organization || "Supermarket"}</strong>
                 </p>
                 <p className="text-[11px] text-slate-400 font-mono mt-0.5">
-                  Account ID: {user?.id} · Role: Trader / Instrument Owner
+                  Account ID: {user?.id || "user-owner-demo"} · Role: Trader / Instrument Owner
                 </p>
               </div>
             </div>

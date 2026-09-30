@@ -65,8 +65,8 @@ export default function OwnerInstrumentPassportPage() {
             { label: instrumentId }
           ]}
           searchPlaceholder="Search instruments..."
-          avatarInitials={currentUser?.avatarInitials || "RK"}
-          userName={currentUser?.name || "Rajesh Kumar"}
+          avatarInitials={currentUser?.avatarInitials || "AR"}
+          userName={currentUser?.name || "Aryan"}
           notificationCount={1}
           onMenuToggle={() => setSidebarOpen(!sidebarOpen)}
         />

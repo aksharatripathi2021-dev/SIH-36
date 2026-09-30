@@ -56,7 +56,7 @@ export function LmoSidebar({ activeItem = "dashboard", isOpen = false, onClose }
               </div>
               <div className="flex flex-col">
                 <span className="font-bold text-sm tracking-tight text-white leading-tight">
-                  LM Verify
+                  e-Tarazu
                 </span>
                 <span className="text-[10px] text-slate-400 font-medium tracking-wide">
                   {t("roles.lmo")}

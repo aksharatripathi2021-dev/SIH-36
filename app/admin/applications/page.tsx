@@ -20,6 +20,12 @@ export default function AdminApplicationsPage() {
 
   useEffect(() => {
     loadApplications();
+    const unsubscribe = (require("@/services/storageService").storageService as any).subscribeToDemoUpdates(() => {
+      loadApplications();
+    });
+    return () => {
+      if (unsubscribe) unsubscribe();
+    };
   }, [statusFilter, zoneFilter, searchQuery]);
 
   const loadApplications = async () => {
@@ -142,7 +148,7 @@ export default function AdminApplicationsPage() {
                       <tr key={app.id} className="hover:bg-slate-50/80 transition-colors">
                         <td className="py-3 px-4 font-mono font-semibold text-slate-900">
                           <Link
-                            href={`/owner/applications/${app.id}`}
+                            href={`/admin/applications/${app.id}`}
                             className="text-[#801424] hover:underline"
                           >
                             {app.id}
@@ -168,10 +174,10 @@ export default function AdminApplicationsPage() {
                         <td className="py-3 px-4 text-slate-500">{app.submittedDate}</td>
                         <td className="py-3 px-4 text-right">
                           <Link
-                            href={`/owner/applications/${app.id}`}
+                            href={`/admin/applications/${app.id}`}
                             className="text-[#801424] font-semibold hover:underline"
                           >
-                            View →
+                            Review & Assign →
                           </Link>
                         </td>
                       </tr>

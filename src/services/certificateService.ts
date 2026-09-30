@@ -58,7 +58,9 @@ export const certificateService = {
 
     const certificates = storageService.getCertificates();
     const certId =
-      data.applicationId === "APP-26036-0148"
+      data.applicationId === "LM-2026-00124"
+        ? "CERT-LM-2026-00124"
+        : data.applicationId === "APP-26036-0148"
         ? "CERT-2025-00981"
         : storageService.getNextCertificateId();
 
@@ -68,13 +70,13 @@ export const certificateService = {
     const newCert: Certificate = {
       certificateId: certId,
       applicationId: data.applicationId,
-      instrumentId: data.instrumentId || "W-104",
-      ownerId: data.ownerId || "user-owner-1",
+      instrumentId: data.instrumentId || (data.applicationId === "LM-2026-00124" ? "EWI-DEMO-001" : "W-104"),
+      ownerId: data.ownerId || (data.applicationId === "LM-2026-00124" ? "user-owner-demo" : "user-owner-1"),
       instrumentName: data.instrumentName,
       ownerName: data.ownerName,
       issuedDate: "12 Jun 2025",
       validUntil: "11 Jun 2026",
-      issuingAuthority: data.issuingAuthority || "Delhi South Legal Metrology Office",
+      issuingAuthority: data.issuingAuthority || "Legal Metrology Division, Department of Consumer Affairs",
       result: "Pass",
       status: "VALID" as CertificateStatus,
       verificationUrl,

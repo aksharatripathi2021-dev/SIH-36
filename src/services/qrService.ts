@@ -92,7 +92,7 @@ export const qrService = {
 <html>
 <head>
   <meta charset="utf-8">
-  <title>QR Sticker - ${certificateId}</title>
+  <title>e-Tarazu QR Sticker - ${certificateId}</title>
   <style>
     @page {
       size: 100mm 120mm;
@@ -197,7 +197,7 @@ export const qrService = {
 </head>
 <body>
   <div class="sticker-card">
-    <div class="badge">Legal Metrology e-Mapan</div>
+    <div class="badge">Legal Metrology e-Tarazu</div>
     <div class="dept-title">DEPARTMENT OF CONSUMER AFFAIRS</div>
     <div class="dept-sub">Verified Measuring Instrument</div>
     <div class="qr-container">
@@ -207,8 +207,8 @@ export const qrService = {
     ${details?.instrumentName ? `<div class="inst-name">${details.instrumentName}</div>` : ""}
     ${details?.validUntil ? `<div class="valid-until">Valid Until: ${details.validUntil}</div>` : ""}
     <p class="scan-note">
-      Scan with any QR scanner to verify digital verification record on the e-Mapan portal.<br>
-      <strong>PS36 e-Mapan Prototype</strong>
+      Scan with any QR scanner to verify digital verification record on the e-Tarazu portal.<br>
+      <strong>PS36 e-Tarazu Prototype</strong>
     </p>
   </div>
   <script>

@@ -14,7 +14,7 @@ export const pdfService = {
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <title>Digital Verification Certificate - ${cert.certificateId}</title>
+  <title>e-Tarazu Digital Verification Certificate - ${cert.certificateId}</title>
   <style>
     @page {
       size: A4 portrait;
@@ -201,7 +201,7 @@ export const pdfService = {
       <p class="div-title">Legal Metrology Division • विधिक मापविज्ञान प्रभाग</p>
 
       <h2 class="cert-main-title">Digital Verification Certificate</h2>
-      <p class="cert-act-subtitle">Prototype Certificate Representation • Legal Metrology (e-Mapan)</p>
+      <p class="cert-act-subtitle">Prototype Certificate Representation • Legal Metrology (e-Tarazu)</p>
       
       <div class="status-ribbon">Status: ${cert.status || "VALID"} • Result: ${cert.result || "Pass"}</div>
     </div>
@@ -238,20 +238,20 @@ export const pdfService = {
         </tr>
         <tr>
           <td class="label">Verification Authority</td>
-          <td class="value">${cert.issuingAuthority || "Delhi South Legal Metrology Office"}</td>
+          <td class="value">${cert.issuingAuthority || "Legal Metrology Division, Department of Consumer Affairs"}</td>
         </tr>
       </table>
 
       <div class="qr-box">
         <img src="${qrDataUrl}" alt="Verification QR Code" class="qr-img" />
         <p class="qr-caption">Public Verification QR</p>
-        <p class="qr-subtext">Scan with e-Mapan or any camera</p>
+        <p class="qr-subtext">Scan with e-Tarazu or any camera</p>
       </div>
     </div>
 
     <div class="statutory-footer">
       <div class="disclaimer-note">
-        <strong>Digital Record Notice:</strong> This is a computer-generated prototype digital verification certificate representation based on data recorded in the e-Mapan system. Physical verification QR sticker should be displayed on the verified instrument.
+        <strong>Digital Record Notice:</strong> This is a computer-generated prototype digital verification certificate representation based on data recorded in the e-Tarazu system. Physical verification QR sticker should be displayed on the verified instrument.
       </div>
       <div class="authority-block" style="text-align: right;">
         <div class="authority-name">${cert.issuingAuthority || "Legal Metrology Office"}</div>

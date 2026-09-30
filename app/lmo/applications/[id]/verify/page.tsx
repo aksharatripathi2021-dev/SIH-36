@@ -390,7 +390,7 @@ export default function FieldVerificationPage() {
                 <div className="sm:pl-3 pt-2 sm:pt-0">
                   <span className="text-slate-400 block text-[10px] uppercase font-bold">Location</span>
                   <span className="font-medium text-slate-800 truncate block">
-                    {application?.location || "Bharat Mart, 18 Ajmal Khan Road, New Delhi"}
+                    {application?.location || "Supermarket, YCC Wanadongri, Nagpur"}
                   </span>
                 </div>
                 <div className="sm:pl-3 pt-2 sm:pt-0">
@@ -468,7 +468,7 @@ export default function FieldVerificationPage() {
                     INSTRUMENT SUMMARY
                   </span>
                   <h3 className="text-base font-bold text-slate-900">
-                    {application?.instrumentName || instrument?.name || "Platform Weighing Scale W-104"}
+                    {application?.instrumentName || instrument?.name || "Electronic Weighing Instrument"}
                   </h3>
 
                   <div className="grid grid-cols-3 gap-3 pt-2 text-xs border-t border-slate-100">

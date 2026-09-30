@@ -121,7 +121,7 @@ function CertificateVerifierContent() {
           <div className="px-6 pt-6 pb-5 border-b border-slate-100 flex flex-col sm:flex-row sm:items-start justify-between gap-3">
             <div>
               <h2 className="text-xl font-bold text-slate-900 tracking-tight">
-                {t("certificate.publicTitle")}
+                e-Tarazu — {t("certificate.publicTitle")}
               </h2>
               <p className="text-xs text-slate-500 mt-1">
                 {t("certificate.publicSubtitle")}

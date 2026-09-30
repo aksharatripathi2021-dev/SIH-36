@@ -106,7 +106,38 @@ export type ApplicationStatus =
   | 'Result Submitted'
   | 'Needs Correction'
   | 'Certificate Generated'
-  | 'Completed';
+  | 'Completed'
+  | 'DRAFT'
+  | 'SUBMITTED'
+  | 'ADMIN_REVIEW'
+  | 'ASSIGNED'
+  | 'FIELD_VERIFICATION'
+  | 'FIELD_VERIFIED'
+  | 'GATC_REVIEW'
+  | 'APPROVED'
+  | 'REJECTED'
+  | 'CERTIFICATE_ISSUED';
+
+export type AuditEventType =
+  | 'APPLICATION_SUBMITTED'
+  | 'APPLICATION_REVIEWED'
+  | 'LMO_ASSIGNED'
+  | 'INSPECTION_STARTED'
+  | 'INSPECTION_SUBMITTED'
+  | 'GATC_REVIEWED'
+  | 'APPLICATION_APPROVED'
+  | 'APPLICATION_REJECTED'
+  | 'CERTIFICATE_ISSUED';
+
+export interface AuditEvent {
+  id: string;
+  applicationId: string;
+  timestamp: string;
+  role: UserRole;
+  actor: string;
+  eventType: AuditEventType;
+  details?: string;
+}
 
 export type PriorityLevel = 'High' | 'Normal' | 'Low';
 

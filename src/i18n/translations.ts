@@ -77,7 +77,7 @@ export const translations: TranslationsByLanguage = {
 
     // Auth & Login
     "auth.serviceLogin": "Service Login",
-    "auth.signInSubtitle": "Sign in to access the Legal Metrology Online Verification System.",
+    "auth.signInSubtitle": "Sign in to access e-Tarazu — Legal Metrology Online Verification System.",
     "auth.identifier": "Official Email or Mobile Number",
     "auth.password": "Password",
     "auth.enterPassword": "Enter your password",

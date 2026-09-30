@@ -71,7 +71,7 @@ export function OwnerSidebar({ activeItem = "dashboard", isOpen = false, onClose
               </div>
               <div className="flex flex-col">
                 <span className="font-bold text-sm tracking-tight text-white leading-tight">
-                  LM Verify
+                  e-Tarazu
                 </span>
                 <span className="text-[10px] text-slate-400 font-medium tracking-wide">
                   {t("roles.owner")}
@@ -207,14 +207,14 @@ export function OwnerSidebar({ activeItem = "dashboard", isOpen = false, onClose
           >
             <div className="flex items-center gap-2.5 overflow-hidden">
               <div className="w-7 h-7 rounded-full bg-[#1A365D] text-white text-xs font-bold flex items-center justify-center shrink-0">
-                {currentUser?.avatarInitials || "RK"}
+                {currentUser?.avatarInitials || "AR"}
               </div>
               <div className="flex flex-col truncate">
                 <span className="text-xs font-semibold text-white truncate">
-                  {currentUser?.name || "Rajesh Kumar"}
+                  {currentUser?.name || "Aryan"}
                 </span>
                 <span className="text-[10px] text-slate-400 truncate">
-                  {currentUser?.email || "owner@bharatmart.com"}
+                  {currentUser?.email || "trader.demo@example.com"}
                 </span>
               </div>
             </div>

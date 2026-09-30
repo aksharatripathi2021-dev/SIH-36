@@ -10,6 +10,7 @@ import { applicationService } from "@/services/applicationService";
 import { certificateService } from "@/services/certificateService";
 import { pdfService } from "@/services/pdfService";
 import { Application, OwnerDashboardMetrics } from "@/types";
+import { storageService } from "@/services/storageService";
 import { useTranslation } from "@/i18n";
 
 export default function OwnerDashboardPage() {
@@ -25,17 +26,28 @@ export default function OwnerDashboardPage() {
 
   useEffect(() => {
     loadDashboardData();
+    const unsubscribe = storageService.subscribeToDemoUpdates(() => {
+      loadDashboardData();
+    });
+    return () => {
+      if (unsubscribe) unsubscribe();
+    };
   }, [statusFilter, searchQuery]);
 
   const loadDashboardData = async () => {
-    const user = await (await import("@/services/authService")).authService.getCurrentUser();
+    let user = await (await import("@/services/authService")).authService.getCurrentUser();
+    if (!user || user.role !== "OWNER") {
+      const ownerUser = await (await import("@/services/authService")).authService.getUserByRole("OWNER");
+      if (ownerUser) user = ownerUser;
+    }
     setActiveUser(user);
 
-    const m = await dashboardService.getOwnerMetrics(user.id);
+    const userId = user?.id || "user-owner-demo";
+    const m = await dashboardService.getOwnerMetrics(userId);
     setMetrics(m);
 
     const apps = await applicationService.getApplications({
-      ownerId: user.id,
+      ownerId: userId,
       status: statusFilter !== "All statuses" ? statusFilter : undefined,
       search: searchQuery || undefined
     });
@@ -64,10 +76,10 @@ export default function OwnerDashboardPage() {
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
               <h2 className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">
-                {t("dashboard.welcome")}, {activeUser?.name?.split(" ")[0] || "Trader"}
+                {t("dashboard.welcome")}, {activeUser?.name?.split(" ")[0] || "Aryan"}
               </h2>
               <p className="text-xs sm:text-sm text-slate-500 mt-0.5">
-                {activeUser?.organization ? `${activeUser.organization} · ` : ""}Overview of your legal metrology compliance, active instruments, and pending inspections.
+                {(activeUser?.organization || "Supermarket")} · Overview of your legal metrology compliance, active instruments, and pending inspections.
               </p>
             </div>
 

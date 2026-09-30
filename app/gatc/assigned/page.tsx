@@ -9,22 +9,39 @@ import { applicationService } from "@/services/applicationService";
 import { Application } from "@/types";
 import { useTranslation } from "@/i18n";
 
+import { storageService } from "@/services/storageService";
+
 export default function GatcAssignedPage() {
   const { t } = useTranslation();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [applications, setApplications] = useState<Application[]>([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    loadAssigned();
-  }, []);
-
   const loadAssigned = async () => {
     const list = await applicationService.getApplications();
-    const assigned = list.filter((a) => a.assignedLab?.id === "user-gatc-1");
+    const assigned = list.filter(
+      (a) =>
+        a.id === "LM-2026-00124" ||
+        a.assignedLab?.id === "user-gatc-1" ||
+        a.assignedLab?.id === "user-gatc-demo" ||
+        a.status === "FIELD_VERIFIED" ||
+        a.status === "GATC_REVIEW" ||
+        a.status === "APPROVED" ||
+        a.status === "Result Submitted"
+    );
     setApplications(assigned.length > 0 ? assigned : list.slice(0, 3));
     setLoading(false);
   };
+
+  useEffect(() => {
+    loadAssigned();
+    const unsubscribe = storageService.subscribeToDemoUpdates(() => {
+      loadAssigned();
+    });
+    return () => {
+      if (unsubscribe) unsubscribe();
+    };
+  }, []);
 
   return (
     <div className="min-h-screen bg-[#F8F9FA] flex">
@@ -100,10 +117,10 @@ export default function GatcAssignedPage() {
                         <td className="py-3 px-4 font-mono font-medium text-slate-700">Bay {idx + 1}</td>
                         <td className="py-3 px-4 text-right">
                           <Link
-                            href="/gatc/results"
+                            href={`/gatc/applications/${app.id}`}
                             className="px-2.5 py-1 text-xs font-semibold text-[#801424] hover:bg-[#801424]/8 rounded transition-colors inline-block"
                           >
-                            Enter Results →
+                            Review &amp; Approve →
                           </Link>
                         </td>
                       </tr>

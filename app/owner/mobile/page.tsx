@@ -5,8 +5,9 @@ import Link from "next/link";
 import { dashboardService } from "@/services/dashboardService";
 import { instrumentService } from "@/services/instrumentService";
 import { applicationService } from "@/services/applicationService";
+import { authService } from "@/services/authService";
 import { StatusBadge } from "@/app/components/StatusBadge";
-import { OwnerDashboardMetrics, Instrument, Application } from "@/types";
+import { OwnerDashboardMetrics, Instrument, Application, UserProfile } from "@/types";
 
 // ─── Bottom Navigation ────────────────────────────────────────────────────────
 function MobileBottomNav({ active }: { active: "home" | "instruments" | "applications" | "profile" }) {
@@ -21,12 +22,12 @@ function MobileBottomNav({ active }: { active: "home" | "instruments" | "applica
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3" />
       </svg>
     )},
-    { key: "applications", label: "Applications", href: "/owner/applications/APP-26036-0148", icon: (
+    { key: "applications", label: "Applications", href: "/owner/applications/LM-2026-00124", icon: (
       <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
       </svg>
     )},
-    { key: "profile", label: "Profile", href: "/login", icon: (
+    { key: "profile", label: "Profile", href: "/owner/profile", icon: (
       <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
       </svg>
@@ -67,17 +68,26 @@ function StatusDot({ status }: { status: string }) {
 
 // ─── Page ─────────────────────────────────────────────────────────────────────
 export default function MobileOwnerDashboard() {
+  const [currentUser, setCurrentUser] = useState<UserProfile | null>(null);
   const [metrics, setMetrics] = useState<OwnerDashboardMetrics | null>(null);
   const [instruments, setInstruments] = useState<Instrument[]>([]);
   const [recentApp, setRecentApp] = useState<Application | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    Promise.all([
-      dashboardService.getOwnerMetrics("user-owner-1"),
-      instrumentService.getInstrumentsByOwner("user-owner-1"),
-      applicationService.getApplicationById("APP-26036-0148"),
-    ]).then(([m, instr, app]) => {
+    authService.getCurrentUser().then(async (user) => {
+      let active = user;
+      if (!active || active.role !== "OWNER") {
+        const ownerUser = await authService.getUserByRole("OWNER");
+        if (ownerUser) active = ownerUser;
+      }
+      setCurrentUser(active);
+      const ownerId = active?.id || "user-owner-demo";
+      const [m, instr, app] = await Promise.all([
+        dashboardService.getOwnerMetrics(ownerId),
+        instrumentService.getInstrumentsByOwner(ownerId),
+        applicationService.getApplicationById("LM-2026-00124"),
+      ]);
       setMetrics(m);
       setInstruments(instr);
       setRecentApp(app);
@@ -100,10 +110,10 @@ export default function MobileOwnerDashboard() {
         <div className="flex items-center justify-between mb-4">
           <div>
             <p className="text-xs text-slate-400">Welcome back,</p>
-            <h1 className="text-lg font-bold leading-tight">Bharat Mart Pvt Ltd</h1>
+            <h1 className="text-lg font-bold leading-tight">{currentUser?.organization || "Supermarket"}</h1>
           </div>
           <div className="w-10 h-10 rounded-full bg-[#801424] text-white font-bold text-sm flex items-center justify-center shadow-sm">
-            BM
+            {currentUser?.avatarInitials || "AR"}
           </div>
         </div>
 

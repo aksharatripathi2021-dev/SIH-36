@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { authService } from "@/services/authService";
+import { authService, DEMO_ACCOUNTS } from "@/services/authService";
 import { UserRole } from "@/types";
 import { useTranslation } from "@/i18n";
 
@@ -18,10 +18,10 @@ interface RoleOption {
 }
 
 const ROLES: RoleOption[] = [
-  { id: "owner", roleEnum: "OWNER", labelKey: "roles.owner", defaultIdentifier: "owner@bharatmart.com", badgeKey: "roles.ownerBadge" },
-  { id: "lmo", roleEnum: "LMO", labelKey: "roles.lmo", defaultIdentifier: "lmo.delhisouth@gov.in", badgeKey: "roles.lmoBadge" },
-  { id: "gatc", roleEnum: "GATC", labelKey: "roles.gatc", defaultIdentifier: "lab@gatc.gov.in", badgeKey: "roles.gatcBadge" },
-  { id: "admin", roleEnum: "ADMIN", labelKey: "roles.admin", defaultIdentifier: "admin@consumeraffairs.nic.in", badgeKey: "roles.adminBadge" },
+  { id: "owner", roleEnum: "OWNER", labelKey: "roles.owner", defaultIdentifier: "trader.demo@example.com", badgeKey: "roles.ownerBadge" },
+  { id: "admin", roleEnum: "ADMIN", labelKey: "roles.admin", defaultIdentifier: "admin.demo@example.com", badgeKey: "roles.adminBadge" },
+  { id: "lmo", roleEnum: "LMO", labelKey: "roles.lmo", defaultIdentifier: "lmo.demo@example.com", badgeKey: "roles.lmoBadge" },
+  { id: "gatc", roleEnum: "GATC", labelKey: "roles.gatc", defaultIdentifier: "gatc.demo@example.com", badgeKey: "roles.gatcBadge" },
 ];
 
 export function ServiceLoginForm() {
@@ -36,6 +36,7 @@ export function ServiceLoginForm() {
   const [statusMessage, setStatusMessage] = useState<string | null>(null);
 
   const activeRoleObj = ROLES.find((r) => r.id === selectedRole) || ROLES[0];
+  const activeDemo = DEMO_ACCOUNTS[selectedRole] || DEMO_ACCOUNTS.owner;
 
   const handleRoleChange = async (roleId: RoleType) => {
     setSelectedRole(roleId);
@@ -56,17 +57,27 @@ export function ServiceLoginForm() {
     setCaptchaInput("");
   };
 
+  const routes: Record<RoleType, string> = {
+    owner: "/owner/dashboard",
+    admin: "/admin/dashboard",
+    lmo:   "/lmo/dashboard",
+    gatc:  "/gatc/dashboard",
+  };
+
   const handleLoginSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const user = await authService.login(identifier || activeRoleObj.defaultIdentifier, activeRoleObj.roleEnum);
     setStatusMessage(`Authenticated as ${user.name} (${user.role}) — redirecting…`);
-    const routes: Record<RoleType, string> = {
-      owner: "/owner/dashboard",
-      lmo:   "/lmo/dashboard",
-      gatc:  "/gatc/dashboard",
-      admin: "/admin/dashboard",
-    };
-    setTimeout(() => router.push(routes[selectedRole]), 600);
+    setTimeout(() => router.push(routes[selectedRole]), 400);
+  };
+
+  const handleQuickDemoLogin = async () => {
+    setIdentifier(activeDemo.email);
+    setPassword(activeDemo.password);
+    setCaptchaInput(captchaCode.replace(/\s+/g, ""));
+    const user = await authService.login(activeDemo.email, activeDemo.role);
+    setStatusMessage(`Authenticated as ${user.name} (${user.role}) — entering ${activeDemo.label} portal…`);
+    setTimeout(() => router.push(routes[selectedRole]), 300);
   };
 
   return (
@@ -257,6 +268,41 @@ export function ServiceLoginForm() {
           </button>
         </div>
       </form>
+
+      {/* ── Deterministic SIH Demo Quick Login Box ── */}
+      <div className="mt-6 pt-5 border-t border-slate-200">
+        <div className="bg-slate-50 border border-slate-200/90 rounded-lg p-4 space-y-3">
+          <div className="flex items-center justify-between gap-2">
+            <div className="flex items-center gap-1.5 font-bold text-slate-800 text-xs">
+              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+              <span>Demo Login ({activeDemo.label})</span>
+            </div>
+            <span className="text-[10px] font-semibold text-slate-500 bg-slate-200/80 px-2 py-0.5 rounded">
+              SIH PS36 Demo
+            </span>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-slate-600 font-mono text-[11px] bg-white p-2.5 rounded border border-slate-200/60">
+            <div>
+              <span className="text-slate-400 font-sans text-[10px] uppercase font-bold block">Email</span>
+              <strong className="text-slate-900 select-all">{activeDemo.email}</strong>
+            </div>
+            <div>
+              <span className="text-slate-400 font-sans text-[10px] uppercase font-bold block">Password</span>
+              <strong className="text-slate-900 select-all">{activeDemo.password}</strong>
+            </div>
+          </div>
+
+          <button
+            type="button"
+            onClick={handleQuickDemoLogin}
+            className="w-full py-2 px-3 bg-slate-900 hover:bg-black active:bg-slate-800 text-white text-xs font-semibold rounded-md shadow-xs transition-colors flex items-center justify-center gap-2 cursor-pointer"
+          >
+            <span>⚡ Use Demo Account</span>
+            <span className="text-[10px] text-slate-300 font-normal">({activeDemo.name})</span>
+          </button>
+        </div>
+      </div>
     </div>
   );
 }

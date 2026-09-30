@@ -57,6 +57,8 @@ function GatcKpiCard({
 }
 
 // ─── Page ─────────────────────────────────────────────────────────────────────
+import { storageService } from "@/services/storageService";
+
 export default function GatcDashboardPage() {
   const { t } = useTranslation();
   const [metrics, setMetrics] = useState<GatcWorkspaceMetrics | null>(null);
@@ -64,16 +66,35 @@ export default function GatcDashboardPage() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    Promise.all([
+  const loadData = async () => {
+    const [m, apps] = await Promise.all([
       dashboardService.getGatcMetrics(),
       applicationService.getApplications({}),
-    ]).then(([m, apps]) => {
-      setMetrics(m);
-      // Show apps assigned to GATC lab
-      setApplications(apps.filter((a) => a.assignedLab?.id === "user-gatc-1").slice(0, 6));
-      setLoading(false);
+    ]);
+    setMetrics(m);
+    // Show apps assigned to GATC lab or in GATC/field verification review stage
+    const gatcApps = apps.filter(
+      (a) =>
+        a.id === "LM-2026-00124" ||
+        a.assignedLab?.id === "user-gatc-1" ||
+        a.assignedLab?.id === "user-gatc-demo" ||
+        a.status === "FIELD_VERIFIED" ||
+        a.status === "GATC_REVIEW" ||
+        a.status === "APPROVED" ||
+        a.status === "Result Submitted"
+    );
+    setApplications(gatcApps.length > 0 ? gatcApps.slice(0, 6) : apps.slice(0, 6));
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    loadData();
+    const unsubscribe = storageService.subscribeToDemoUpdates(() => {
+      loadData();
     });
+    return () => {
+      if (unsubscribe) unsubscribe();
+    };
   }, []);
 
   if (loading || !metrics) {
@@ -280,10 +301,10 @@ export default function GatcDashboardPage() {
                           <td className="px-4 py-3 text-slate-500">{app.submittedDate}</td>
                           <td className="px-4 py-3">
                             <Link
-                              href={`/owner/applications/${app.id}`}
+                              href={`/gatc/applications/${app.id}`}
                               className="text-[#801424] font-semibold hover:underline"
                             >
-                              View →
+                              Review →
                             </Link>
                           </td>
                         </tr>
@@ -308,17 +329,17 @@ export default function GatcDashboardPage() {
                     </thead>
                     <tbody>
                       <tr className="hover:bg-slate-50/60 transition-colors">
-                        <td className="px-5 py-3 font-mono font-semibold text-[#0D1B2A]">APP-26036-0148</td>
-                        <td className="px-4 py-3 text-slate-700">Platform Weighing Scale W-104</td>
-                        <td className="px-4 py-3 text-slate-600">Bharat Mart Pvt Ltd</td>
-                        <td className="px-4 py-3"><StatusBadge status="Result Submitted" /></td>
+                        <td className="px-5 py-3 font-mono font-semibold text-[#0D1B2A]">LM-2026-00124</td>
+                        <td className="px-4 py-3 text-slate-700">Electronic Weighing Instrument</td>
+                        <td className="px-4 py-3 text-slate-600">Aryan (Supermarket)</td>
+                        <td className="px-4 py-3"><StatusBadge status="FIELD_VERIFIED" /></td>
                         <td className="px-4 py-3">
                           <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-50 text-rose-700 border border-rose-200">High</span>
                         </td>
-                        <td className="px-4 py-3 text-slate-500">08 Jun 2025</td>
+                        <td className="px-4 py-3 text-slate-500">12 Jun 2025</td>
                         <td className="px-4 py-3">
-                          <Link href="/owner/applications/APP-26036-0148" className="text-[#801424] font-semibold hover:underline">
-                            View →
+                          <Link href="/gatc/applications/LM-2026-00124" className="text-[#801424] font-semibold hover:underline">
+                            Review →
                           </Link>
                         </td>
                       </tr>
