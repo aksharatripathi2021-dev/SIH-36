@@ -1,0 +1,43 @@
+[
+  {
+    "id": "user-owner-1",
+    "name": "Rajesh Kumar",
+    "email": "owner@bharatmart.com",
+    "mobile": "9876543210",
+    "role": "OWNER",
+    "avatarInitials": "RK",
+    "organization": "Bharat Mart Pvt Ltd",
+    "address": "18 Ajmal Khan Road, Karol Bagh, New Delhi - 110005"
+  },
+  {
+    "id": "user-lmo-1",
+    "name": "Priya Sharma",
+    "email": "lmo.delhisouth@gov.in",
+    "mobile": "9810012345",
+    "role": "LMO",
+    "avatarInitials": "PS",
+    "designation": "Legal Metrology Officer",
+    "zone": "Delhi South Zone",
+    "office": "Delhi South Legal Metrology Office"
+  },
+  {
+    "id": "user-gatc-1",
+    "name": "GATC Delhi Lab",
+    "email": "lab@gatc.gov.in",
+    "mobile": "9811122233",
+    "role": "GATC",
+    "avatarInitials": "GK",
+    "organization": "GATC Testing Center",
+    "zone": "Delhi North Zone"
+  },
+  {
+    "id": "user-admin-1",
+    "name": "Ministry Administrator",
+    "email": "admin@consumeraffairs.nic.in",
+    "mobile": "9800000001",
+    "role": "ADMIN",
+    "avatarInitials": "MA",
+    "designation": "Administrator",
+    "organization": "Department of Consumer Affairs, Government of India"
+  }
+]

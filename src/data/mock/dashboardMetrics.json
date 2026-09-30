@@ -1,0 +1,104 @@
+{
+  "ministry": {
+    "registeredInstruments": 2846,
+    "activeApplications": 1284,
+    "validCertificates": 892,
+    "expiringIn30Days": 74,
+    "lastSynced": "2 min ago",
+    "systemStatus": "System healthy",
+    "applicationsOverTime": [
+      { "month": "Jan", "count": 175 },
+      { "month": "Feb", "count": 215 },
+      { "month": "Mar", "count": 248 },
+      { "month": "Apr", "count": 282 },
+      { "month": "May", "count": 295 },
+      { "month": "Jun", "count": 340 }
+    ],
+    "applicationsByStatus": [
+      { "status": "Submitted", "percentage": 18, "color": "#3B82F6" },
+      { "status": "Under Review", "percentage": 12, "color": "#06B6D4" },
+      { "status": "Scheduled", "percentage": 22, "color": "#6366F1" },
+      { "status": "Verification In Progress", "percentage": 16, "color": "#F59E0B" },
+      { "status": "Result Submitted", "percentage": 9, "color": "#EF4444" },
+      { "status": "Completed", "percentage": 23, "color": "#801424" }
+    ],
+    "volumeByState": [
+      { "state": "Delhi", "volume": 342 },
+      { "state": "Maharashtra", "volume": 286 },
+      { "state": "Karnataka", "volume": 244 },
+      { "state": "Gujarat", "volume": 198 },
+      { "state": "Tamil Nadu", "volume": 174 }
+    ],
+    "liveActivity": [
+      {
+        "id": "act-1",
+        "description": "APP-26036-0148 result submitted by Priya Sharma",
+        "timestamp": "Today",
+        "type": "result_submitted"
+      },
+      {
+        "id": "act-2",
+        "description": "Certificate CERT-2025-00981 generated",
+        "timestamp": "Today",
+        "type": "certificate_generated"
+      },
+      {
+        "id": "act-3",
+        "description": "Re-verification request received from Bharat Mart",
+        "timestamp": "Yesterday",
+        "type": "reverification_requested"
+      }
+    ]
+  },
+  "lmo": {
+    "pendingReviewCount": 12,
+    "scheduledTodayCount": 5,
+    "verificationInProgressCount": 3,
+    "completedThisMonthCount": 28,
+    "lastSynced": "12 Jun 2025, 09:42 IST",
+    "zone": "Delhi South Zone",
+    "todaySchedule": [
+      { "time": "10:00", "clientName": "Bharat Mart", "applicationId": "APP-26036-0148" },
+      { "time": "13:30", "clientName": "FreshKart Retail", "applicationId": "APP-26036-0142" },
+      { "time": "16:00", "clientName": "Mahadev Traders", "applicationId": "APP-26036-0139" }
+    ],
+    "weeklyWorkload": [
+      { "day": "Mon", "count": 4 },
+      { "day": "Tue", "count": 6 },
+      { "day": "Wed", "count": 5 },
+      { "day": "Thu", "count": 8 },
+      { "day": "Fri", "count": 7 },
+      { "day": "Sat", "count": 9 },
+      { "day": "Sun", "count": 6 }
+    ],
+    "workloadSummary": {
+      "pendingReview": 12,
+      "scheduledToday": 5,
+      "inProgress": 3
+    }
+  },
+  "owner": {
+    "totalInstruments": 4,
+    "verifiedCount": 2,
+    "pendingCount": 1,
+    "expiringCount": 1,
+    "alertInstrumentId": "W-104",
+    "alertMessage": "Platform weighing scale W-104 expires in 18 days"
+  },
+  "gatc": {
+    "assignedForTesting": 7,
+    "inTesting": 4,
+    "resultsSubmitted": 18,
+    "passRatePercentage": 96,
+    "labCapacity": {
+      "percentage": 62,
+      "activeTests": 4,
+      "totalBays": 7
+    },
+    "recentActivity": [
+      { "id": "g-1", "title": "APP-26036-0129 completed", "detail": "Sona Jewellers · 10 Jun 2025", "date": "Today" },
+      { "id": "g-2", "title": "Result submitted", "detail": "Bharat Mart Pvt Ltd · 12 Jun 2025", "date": "Today" },
+      { "id": "g-3", "title": "Testing started", "detail": "Precision Instruments · 14 Jun 2025", "date": "Yesterday" }
+    ]
+  }
+}

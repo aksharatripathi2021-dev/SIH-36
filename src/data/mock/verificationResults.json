@@ -1,0 +1,38 @@
+[
+  {
+    "applicationId": "APP-26036-0148",
+    "instrumentId": "W-104",
+    "testStandard": "OIML R76-1",
+    "referenceWeights": "20 kg / 50 kg / 100 kg",
+    "zeroError": "0.00 kg",
+    "repeatabilityError": "0.02%",
+    "eccentricityError": "0.01%",
+    "observedErrorDisplay": "+0.02%",
+    "condition": "Good",
+    "sealIntact": true,
+    "calibrationStickerPresent": true,
+    "overallResult": "Pass",
+    "nextAction": "Certificate processing",
+    "officerNotes": "Instrument complies with verification limits under Legal Metrology Rules.",
+    "evidenceFiles": [
+      {
+        "id": "ev-1",
+        "filename": "front-view.jpg",
+        "type": "image",
+        "url": "/evidence/front-view.jpg"
+      },
+      {
+        "id": "ev-2",
+        "filename": "display-panel.jpg",
+        "type": "image",
+        "url": "/evidence/display-panel.jpg"
+      },
+      {
+        "id": "ev-3",
+        "filename": "seal-closeup.jpg",
+        "type": "image",
+        "url": "/evidence/seal-closeup.jpg"
+      }
+    ]
+  }
+]

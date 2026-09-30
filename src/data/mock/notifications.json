@@ -1,0 +1,29 @@
+[
+  {
+    "id": "notif-1",
+    "title": "Certificate Expiry Warning",
+    "message": "Platform weighing scale W-104 expires in 18 days",
+    "type": "warning",
+    "date": "12 Jun 2025",
+    "read": false,
+    "link": "/owner/re-verify/W-104"
+  },
+  {
+    "id": "notif-2",
+    "title": "Result Submitted",
+    "message": "Verification result for APP-26036-0148 submitted by Priya Sharma",
+    "type": "info",
+    "date": "12 Jun 2025",
+    "read": true,
+    "link": "/owner/applications/APP-26036-0148"
+  },
+  {
+    "id": "notif-3",
+    "title": "Schedule Confirmed",
+    "message": "Field verification scheduled for 12 Jun 2025 at 10:00",
+    "type": "success",
+    "date": "10 Jun 2025",
+    "read": true,
+    "link": "/owner/applications/APP-26036-0148"
+  }
+]
